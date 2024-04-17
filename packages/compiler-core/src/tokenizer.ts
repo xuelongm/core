@@ -699,6 +699,7 @@ export default class Tokenizer {
   }
   private stateInDirName(c: number): void {
     if (c === CharCodes.Eq || isEndOfTagSection(c)) {
+      // 如果没有绑定数据，直接获取name
       this.cbs.ondirname(this.sectionStart, this.index)
       this.handleAttrNameEnd(c)
     } else if (c === CharCodes.Colon) {
@@ -706,6 +707,7 @@ export default class Tokenizer {
       this.state = State.InDirArg
       this.sectionStart = this.index + 1
     } else if (c === CharCodes.Dot) {
+      // 处理前面如： v-on
       this.cbs.ondirname(this.sectionStart, this.index)
       this.state = State.InDirModifier
       this.sectionStart = this.index + 1
@@ -761,7 +763,9 @@ export default class Tokenizer {
       this.state = State.BeforeAttrName
       this.stateBeforeAttrName(c)
     } else if (!isWhitespace(c)) {
+      // 不为空的时候，当前属性结束
       this.cbs.onattribend(QuoteType.NoValue, this.sectionStart)
+      // 进入下次循环
       this.handleAttrStart(c)
     }
   }

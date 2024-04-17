@@ -1,6 +1,8 @@
 export enum ShapeFlags {
   ELEMENT = 1,
+  // function组件
   FUNCTIONAL_COMPONENT = 1 << 1,
+  // 有状态组件
   STATEFUL_COMPONENT = 1 << 2,
   TEXT_CHILDREN = 1 << 3,
   ARRAY_CHILDREN = 1 << 4,

@@ -195,6 +195,7 @@ const tokenizer = new Tokenizer(stack, {
     }
   },
 
+  // 创建 prop的name
   ondirname(start, end) {
     const raw = getSlice(start, end)
     const name =
@@ -222,9 +223,9 @@ const tokenizer = new Tokenizer(stack, {
       currentProp = {
         type: NodeTypes.DIRECTIVE,
         name,
-        rawName: raw,
+        rawName: raw, // 仅在解析时使用
         exp: undefined,
-        arg: undefined,
+        arg: undefined, //表示 name='xxxx' arg = name
         modifiers: raw === '.' ? ['prop'] : [],
         loc: getLoc(start),
       }
@@ -249,6 +250,7 @@ const tokenizer = new Tokenizer(stack, {
       ;(currentProp as AttributeNode).name += arg
       setLocEnd((currentProp as AttributeNode).nameLoc, end)
     } else {
+      // arg 内容
       const isStatic = arg[0] !== `[`
       ;(currentProp as DirectiveNode).arg = createExp(
         isStatic ? arg : arg.slice(1, -1),
@@ -292,10 +294,12 @@ const tokenizer = new Tokenizer(stack, {
   onattribnameend(end) {
     const start = currentProp!.loc.start.offset
     const name = getSlice(start, end)
+    // 复制directive的原生名字
     if (currentProp!.type === NodeTypes.DIRECTIVE) {
       currentProp!.rawName = name
     }
     // check duplicate attrs
+    // 检查重复元素
     if (
       currentOpenTag!.props.some(
         p => (p.type === NodeTypes.DIRECTIVE ? p.rawName : p.name) === name,
@@ -330,6 +334,7 @@ const tokenizer = new Tokenizer(stack, {
             emitError(ErrorCodes.MISSING_ATTRIBUTE_VALUE, end)
           }
 
+          // exp 如：name="xxx" exp 表示 xxx
           currentProp!.value = {
             type: NodeTypes.TEXT,
             content: currentAttrValue,
@@ -364,6 +369,7 @@ const tokenizer = new Tokenizer(stack, {
               expParseMode = ExpParseMode.Statements
             }
           }
+          // exp 如：name="xxx" exp 表示 xxx
           currentProp.exp = createExp(
             currentAttrValue,
             false,
@@ -961,6 +967,7 @@ enum ExpParseMode {
   Skip,
 }
 
+// 创建exp
 function createExp(
   content: SimpleExpressionNode['content'],
   isStatic: SimpleExpressionNode['isStatic'] = false,
@@ -976,11 +983,13 @@ function createExp(
     parseMode !== ExpParseMode.Skip &&
     content.trim()
   ) {
+    // 是否为简单表达式
     if (isSimpleIdentifier(content)) {
       exp.ast = null // fast path
       return exp
     }
     try {
+      // 处理表达式，创建ast，等到转换时，将处理前缀文婷
       const plugins = currentOptions.expressionPlugins
       const options: BabelOptions = {
         plugins: plugins ? [...plugins, 'typescript'] : ['typescript'],

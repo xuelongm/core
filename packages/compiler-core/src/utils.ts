@@ -61,7 +61,7 @@ export function isCoreComponent(tag: string): symbol | void {
       return BASE_TRANSITION
   }
 }
-
+// 数字或者文字
 const nonIdentifierRE = /^\d|[^\$\w]/
 export const isSimpleIdentifier = (name: string): boolean =>
   !nonIdentifierRE.test(name)

@@ -69,6 +69,7 @@ export function renderComponentRoot(
   }
 
   try {
+    // 状态组件
     if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
       // withProxy is a proxy with a different `has` trap only for
       // runtime-compiled render functions using `with` block.
@@ -102,6 +103,7 @@ export function renderComponentRoot(
       fallthroughAttrs = attrs
     } else {
       // functional
+      // 函数式组件
       const render = Component as FunctionalComponent
       // in dev, mark attrs accessed if optional props (attrs === props)
       if (__DEV__ && attrs === props) {

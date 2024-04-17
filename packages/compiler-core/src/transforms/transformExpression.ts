@@ -293,6 +293,7 @@ export function processExpression(
   const parentStack: Node[] = []
   const knownIds: Record<string, number> = Object.create(context.identifiers)
 
+  // 获取当前需要转换的node
   walkIdentifiers(
     ast,
     (node, parent, _, isReferenced, isLocal) => {
