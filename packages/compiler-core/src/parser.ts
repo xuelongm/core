@@ -151,6 +151,7 @@ const tokenizer = new Tokenizer(stack, {
     endOpenTag(end)
   },
 
+  // 检查错误，并弹出头部element
   onclosetag(start, end) {
     const name = getSlice(start, end)
     if (!currentOptions.isVoidTag(name)) {
@@ -163,6 +164,7 @@ const tokenizer = new Tokenizer(stack, {
             emitError(ErrorCodes.X_MISSING_END_TAG, stack[0].loc.start.offset)
           }
           for (let j = 0; j <= i; j++) {
+            // 弹出当前头部element，当前element处理完成
             const el = stack.shift()!
             onCloseTag(el, end, j < i)
           }
@@ -180,11 +182,13 @@ const tokenizer = new Tokenizer(stack, {
     currentOpenTag!.isSelfClosing = true
     endOpenTag(end)
     if (stack[0]?.tag === name) {
+      // 没有自元素，直接出栈
       onCloseTag(stack.shift()!, end)
     }
   },
 
   onattribname(start, end) {
+    // 处理attribute 数据，建立新的attribute
     // plain attribute
     currentProp = {
       type: NodeTypes.ATTRIBUTE,
@@ -205,7 +209,7 @@ const tokenizer = new Tokenizer(stack, {
           ? 'on'
           : raw === '#'
             ? 'slot'
-            : raw.slice(2)
+            : raw.slice(2) // v-的情况
 
     if (!inVPre && name === '') {
       emitError(ErrorCodes.X_MISSING_DIRECTIVE_NAME, start)
@@ -233,6 +237,7 @@ const tokenizer = new Tokenizer(stack, {
         inVPre = tokenizer.inVPre = true
         currentVPreBoundary = currentOpenTag
         // convert dirs before this one to attributes
+        // 如果是pre，将前面转换过的directive 转换为attributes
         const props = currentOpenTag!.props
         for (let i = 0; i < props.length; i++) {
           if (props[i].type === NodeTypes.DIRECTIVE) {
@@ -243,6 +248,7 @@ const tokenizer = new Tokenizer(stack, {
     }
   },
 
+  // deal args of dirs
   ondirarg(start, end) {
     if (start === end) return
     const arg = getSlice(start, end)
@@ -261,6 +267,7 @@ const tokenizer = new Tokenizer(stack, {
     }
   },
 
+  // deal modifier
   ondirmodifier(start, end) {
     const mod = getSlice(start, end)
     if (inVPre) {
@@ -402,6 +409,7 @@ const tokenizer = new Tokenizer(stack, {
         currentProp.type !== NodeTypes.DIRECTIVE ||
         currentProp.name !== 'pre'
       ) {
+        // 添加propops
         currentOpenTag.props.push(currentProp)
       }
     }
@@ -598,6 +606,7 @@ function onText(content: string, start: number, end: number) {
       content = currentOptions.decodeEntities!(content, false)
     }
   }
+  // 获取parent
   const parent = stack[0] || currentRoot
   const lastNode = parent.children[parent.children.length - 1]
   if (lastNode?.type === NodeTypes.TEXT) {
@@ -636,6 +645,7 @@ function onCloseTag(el: ElementNode, end: number, isImplied = false) {
   }
 
   // refine element type
+  // tagTag 确定当前组件类型
   const { tag, ns } = el
   if (!inVPre) {
     if (tag === 'slot') {

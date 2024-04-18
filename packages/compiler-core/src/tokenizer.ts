@@ -758,12 +758,13 @@ export default class Tokenizer {
     if (c === CharCodes.Eq) {
       this.state = State.BeforeAttrValue
     } else if (c === CharCodes.Slash || c === CharCodes.Gt) {
+      // 结束
       this.cbs.onattribend(QuoteType.NoValue, this.sectionStart)
       this.sectionStart = -1
       this.state = State.BeforeAttrName
       this.stateBeforeAttrName(c)
     } else if (!isWhitespace(c)) {
-      // 不为空的时候，当前属性结束
+      // 为空的时候，当前属性结束
       this.cbs.onattribend(QuoteType.NoValue, this.sectionStart)
       // 进入下次循环
       this.handleAttrStart(c)
@@ -783,6 +784,7 @@ export default class Tokenizer {
     }
   }
   private handleInAttrValue(c: number, quote: number) {
+    // 快速找到quote
     if (c === quote || (__BROWSER__ && this.fastForwardTo(quote))) {
       this.cbs.onattribdata(this.sectionStart, this.index)
       this.sectionStart = -1
@@ -1106,6 +1108,7 @@ export default class Tokenizer {
     this.cbs.onend()
   }
 
+  // 处理尾部数据-
   /** Handle any trailing data. */
   private handleTrailingData() {
     const endIndex = this.buffer.length
