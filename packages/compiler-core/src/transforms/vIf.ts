@@ -35,6 +35,7 @@ import { PatchFlagNames, PatchFlags } from '@vue/shared'
 
 export const transformIf = createStructuralDirectiveTransform(
   /^(if|else|else-if)$/,
+  // prop => dir
   (node, dir, context) => {
     return processIf(node, dir, context, (ifNode, branch, isRoot) => {
       // #1587: We need to dynamically increment the key based on the current
@@ -98,6 +99,7 @@ export function processIf(
   if (!__BROWSER__ && context.prefixIdentifiers && dir.exp) {
     // dir.exp can only be simple expression because vIf transform is applied
     // before expression transform.
+    // 转换exp的表达式
     dir.exp = processExpression(dir.exp as SimpleExpressionNode, context)
   }
 
@@ -220,6 +222,7 @@ function createCodegenNodeForBranch(
   keyIndex: number,
   context: TransformContext,
 ): IfConditionalExpression | BlockCodegenNode | MemoExpression {
+  // 处理v-if 和 v-else-if 的情况
   if (branch.condition) {
     return createConditionalExpression(
       branch.condition,
@@ -232,6 +235,7 @@ function createCodegenNodeForBranch(
       ]),
     ) as IfConditionalExpression
   } else {
+    // 处理 v-else 的情况
     return createChildrenCodegenNode(branch, keyIndex, context)
   }
 }
