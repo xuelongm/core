@@ -43,6 +43,7 @@ export const transformOn: DirectiveTransform = (
   if (arg.type === NodeTypes.SIMPLE_EXPRESSION) {
     if (arg.isStatic) {
       let rawName = arg.content
+      // 3.4 移除对vnode-*的支持
       if (__DEV__ && rawName.startsWith('vnode')) {
         context.onError(createCompilerError(ErrorCodes.X_VNODE_HOOKS, arg.loc))
       }

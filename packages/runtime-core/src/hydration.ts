@@ -488,6 +488,7 @@ export function createHydrationFunctions(
         }
       }
 
+      // 针对element的扩展
       // vnode / directive hooks
       let vnodeHooks: VNodeHook | null | undefined
       if ((vnodeHooks = props && props.onVnodeBeforeMount)) {
@@ -496,6 +497,7 @@ export function createHydrationFunctions(
       if (dirs) {
         invokeDirectiveHook(vnode, null, parentComponent, 'beforeMount')
       }
+      // 针对element扩展生命周期
       if (
         (vnodeHooks = props && props.onVnodeMounted) ||
         dirs ||

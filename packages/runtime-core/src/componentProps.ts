@@ -213,6 +213,7 @@ export function initProps(
     validateProps(rawProps || {}, props, instance)
   }
 
+  // 转换为reactive的状态
   if (isStateful) {
     // stateful
     instance.props = isSSR ? props : shallowReactive(props)

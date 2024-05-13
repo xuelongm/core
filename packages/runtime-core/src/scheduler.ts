@@ -97,6 +97,7 @@ export function queueJob(job: SchedulerJob) {
     if (job.id == null) {
       queue.push(job)
     } else {
+      // 如果有id，插入到相应的位置
       queue.splice(findInsertionIndex(job.id), 0, job)
     }
     queueFlush()

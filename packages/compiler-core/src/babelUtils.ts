@@ -213,7 +213,7 @@ export function extractIdentifiers(
     case 'Identifier':
       nodes.push(param)
       break
-
+    // const name = person.name
     case 'MemberExpression':
       let object: any = param
       while (object.type === 'MemberExpression') {
@@ -221,7 +221,7 @@ export function extractIdentifiers(
       }
       nodes.push(object)
       break
-
+    // 表示省略值 const {name} = person;
     case 'ObjectPattern':
       for (const prop of param.properties) {
         if (prop.type === 'RestElement') {
@@ -231,17 +231,18 @@ export function extractIdentifiers(
         }
       }
       break
-
+    // const [name, age] = ['231', '1']
     case 'ArrayPattern':
       param.elements.forEach(element => {
         if (element) extractIdentifiers(element, nodes)
       })
       break
-
+    // 表示省略值 const {name, ...rest} = person;
     case 'RestElement':
       extractIdentifiers(param.argument, nodes)
       break
 
+    // 表示默认值 const {name = 'asd'} = person;
     case 'AssignmentPattern':
       extractIdentifiers(param.left, nodes)
       break

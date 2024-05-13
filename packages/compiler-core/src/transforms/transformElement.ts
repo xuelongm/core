@@ -76,6 +76,7 @@ export const transformElement: NodeTransform = (node, context) => {
   return function postTransformElement() {
     node = context.currentNode!
 
+    // 只处理component 和 element 组件
     if (
       !(
         node.type === NodeTypes.ELEMENT &&

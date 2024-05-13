@@ -43,6 +43,7 @@ const defaultFallback = createSimpleExpression(`undefined`, false)
 // 2. Track v-slot depths so that we know a slot is inside another slot.
 //    Note the exit callback is executed before buildSlots() on the same node,
 //    so only nested slots see positive numbers.
+// 添加前缀
 export const trackSlotScopes: NodeTransform = (node, context) => {
   if (
     node.type === NodeTypes.ELEMENT &&
@@ -55,6 +56,7 @@ export const trackSlotScopes: NodeTransform = (node, context) => {
     if (vSlot) {
       const slotProps = vSlot.exp
       if (!__BROWSER__ && context.prefixIdentifiers) {
+        // 添加全局 prefix
         slotProps && context.addIdentifiers(slotProps)
       }
       context.scopes.vSlot++

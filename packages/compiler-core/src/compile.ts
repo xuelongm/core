@@ -41,6 +41,7 @@ export function getBaseTransformPreset(
       ...(!__BROWSER__ && prefixIdentifiers
         ? [
             // order is important
+            // 添加前缀，slot使用function来解决
             trackVForSlotScopes,
             transformExpression,
           ]
@@ -49,6 +50,7 @@ export function getBaseTransformPreset(
           : []),
       transformSlotOutlet,
       transformElement,
+      // 添加前缀
       trackSlotScopes,
       transformText,
     ],

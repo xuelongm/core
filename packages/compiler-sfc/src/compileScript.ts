@@ -497,6 +497,7 @@ export function compileScript(
       } else if (processDefineExpose(ctx, expr)) {
         // defineExpose({}) -> expose({})
         const callee = (expr as CallExpression).callee
+        // 将defineExpose 替换为 __expose
         ctx.s.overwrite(
           callee.start! + startOffset,
           callee.end! + startOffset,
